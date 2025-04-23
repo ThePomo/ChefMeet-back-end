@@ -1,0 +1,6 @@
+@ChefMeet_HostAddress = http://localhost:5086
+
+GET {{ChefMeet_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
