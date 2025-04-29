@@ -142,7 +142,7 @@ namespace ChefMeet.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ChefId")
+                    b.Property<int?>("ChefId")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatoreId")
@@ -468,9 +468,7 @@ namespace ChefMeet.Migrations
                 {
                     b.HasOne("ChefMeet.Models.Chef", "Chef")
                         .WithMany("Creazioni")
-                        .HasForeignKey("ChefId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ChefId");
 
                     b.HasOne("ChefMeet.Models.ApplicationUser", "Creatore")
                         .WithMany()

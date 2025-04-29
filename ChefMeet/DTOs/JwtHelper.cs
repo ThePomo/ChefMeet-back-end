@@ -8,15 +8,19 @@ namespace ChefMeet.Helpers;
 
 public static class JwtHelper
 {
-    public static string GenerateJwtToken(ApplicationUser user, IConfiguration config)
+    public static string GenerateJwtToken(ApplicationUser user, IConfiguration config, IList<string> ruoli)
     {
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id),
             new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Ruolo)
+            new Claim(ClaimTypes.Email, user.Email)
         };
+
+        foreach (var ruolo in ruoli)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, ruolo));
+        }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -32,4 +36,3 @@ public static class JwtHelper
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
-

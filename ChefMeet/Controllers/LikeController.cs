@@ -9,7 +9,7 @@ using ChefMeet.Data;
 
 namespace ChefMeet.Controllers
 {
-    [Authorize(Roles = "Chef,Utente")]
+    [Authorize(Roles = "Chef,Utente,Admin")]
     [ApiController]
     [Route("api/[controller]")]
     public class LikeController : ControllerBase

@@ -46,7 +46,9 @@ namespace ChefMeet.Controllers
                 ChefNome = evento.Chef.Utente != null
                     ? $"{evento.Chef.Utente.Nome} {evento.Chef.Utente.Cognome}"
                     : "Chef",
-                ChefUserId = evento.Chef.UserId
+                ChefUserId = evento.Chef.UserId,
+                ChefId = evento.Chef.Id
+
             };
 
             return Ok(dto);
@@ -76,7 +78,8 @@ namespace ChefMeet.Controllers
                     ChefNome = e.Chef != null && e.Chef.Utente != null
                         ? $"{e.Chef.Utente.Nome} {e.Chef.Utente.Cognome}"
                         : "Chef sconosciuto",
-                    ChefUserId = e.Chef?.UserId
+                    ChefUserId = e.Chef?.UserId,
+                    ChefId = e.Chef?.Id ?? 0 // 🔥 Aggiunto qui
                 }).ToList();
 
                 return Ok(dtoList);
@@ -89,7 +92,8 @@ namespace ChefMeet.Controllers
         }
 
 
-        
+
+
         // 📌 POST - Crea nuovo evento (immagine obbligatoria)
         [HttpPost]
         [Authorize(Roles = "Chef")]
@@ -223,7 +227,8 @@ namespace ChefMeet.Controllers
                 ChefNome = e.Chef != null && e.Chef.Utente != null
                     ? $"{e.Chef.Utente.Nome} {e.Chef.Utente.Cognome}"
                     : "Chef sconosciuto",
-                ChefUserId = e.Chef?.UserId
+                ChefUserId = e.Chef?.UserId,
+                ChefId = e.Chef?.Id ?? 0
             }).ToList();
 
             return Ok(dtoList);

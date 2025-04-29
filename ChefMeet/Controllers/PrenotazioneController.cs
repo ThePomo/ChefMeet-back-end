@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ChefMeet.Controllers
 {
-    [Authorize(Roles = "Utente")]
+    [Authorize(Roles = "Chef,Utente,Admin")]
     [ApiController]
     [Route("api/[controller]")]
     public class PrenotazioneController : ControllerBase
@@ -22,6 +22,31 @@ namespace ChefMeet.Controllers
             _context = context;
             _userManager = userManager;
         }
+
+        // 📌 GET - Prenotazioni ricevute dallo chef
+        [HttpGet("PrenotazioniRicevute/{userId}")]
+        [Authorize(Roles = "Chef")]
+        public async Task<IActionResult> GetPrenotazioniRicevute(string userId)
+        {
+            var prenotazioniRicevute = await _context.Prenotazioni
+                .Include(p => p.Evento)
+                    .ThenInclude(e => e.Chef)
+                .Include(p => p.Utente)
+                .Where(p => p.Evento.Chef.UserId == userId)
+                .Select(p => new PrenotazioneDTO
+                {
+                    Id = p.Id,
+                    EventoId = p.EventoId,
+                    EventoTitolo = p.Evento.Titolo,
+                    UtenteNome = p.Utente.Nome + " " + p.Utente.Cognome,
+                    DataPrenotazione = p.DataPrenotazione
+                })
+                .ToListAsync();
+
+            return Ok(prenotazioniRicevute);
+        }
+
+
 
         // 📌 GET - Singola prenotazione
         [HttpGet("{id}")]

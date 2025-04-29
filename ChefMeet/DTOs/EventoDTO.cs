@@ -10,5 +10,8 @@
         public string Immagine { get; set; }
         public string ChefNome { get; set; }
         public string ChefUserId { get; set; }
+
+       public int ChefId { get; set; }
+
     }
 }

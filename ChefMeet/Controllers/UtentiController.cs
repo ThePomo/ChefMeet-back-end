@@ -1,4 +1,5 @@
 ﻿using ChefMeet.Data;
+using ChefMeet.DTOs;
 using ChefMeet.Models;
 using ChefMeet.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -14,11 +15,13 @@ namespace ChefMeet.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IWebHostEnvironment _env;
 
-        public UtentiController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public UtentiController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IWebHostEnvironment env)
         {
             _context = context;
             _userManager = userManager;
+            _env = env;
         }
 
         // 📌 GET: /api/Utenti/ricerca?nome=...
@@ -78,6 +81,44 @@ namespace ChefMeet.Controllers
                     .Select(c => (int?)c.Id)
                     .FirstOrDefaultAsync()
             });
+        }
+
+        // 📌 PUT: /api/Utenti/{id}
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<IActionResult> ModificaProfilo(string id, [FromForm] UpdateProfiloDTO dto, IFormFile? immagineProfilo)
+        {
+            var utente = await _userManager.FindByIdAsync(id);
+            if (utente == null) return NotFound("Utente non trovato.");
+
+            if (!string.IsNullOrWhiteSpace(dto.Nome))
+                utente.Nome = dto.Nome;
+
+            if (!string.IsNullOrWhiteSpace(dto.Cognome))
+                utente.Cognome = dto.Cognome;
+
+            if (!string.IsNullOrWhiteSpace(dto.Email))
+                utente.Email = dto.Email;
+
+            if (immagineProfilo != null && immagineProfilo.Length > 0)
+            {
+                var folderPath = Path.Combine(_env.WebRootPath, "uploads", "utenti");
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(immagineProfilo.FileName);
+                var filePath = Path.Combine(folderPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await immagineProfilo.CopyToAsync(stream);
+                }
+
+                utente.ImmagineProfilo = $"/uploads/utenti/{fileName}";
+            }
+
+            await _userManager.UpdateAsync(utente);
+            return Ok("Profilo aggiornato con successo.");
         }
     }
 }

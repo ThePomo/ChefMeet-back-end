@@ -41,7 +41,7 @@ namespace ChefMeet.Services
                 Nome = dto.Nome,
                 Cognome = dto.Cognome,
                 Ruolo = dto.Ruolo,
-                ImmagineProfilo = immagineProfiloPath 
+                ImmagineProfilo = immagineProfiloPath
             };
 
             var result = await _userManager.CreateAsync(newUser, dto.Password);
@@ -89,7 +89,11 @@ namespace ChefMeet.Services
             if (!isPasswordValid)
                 return null;
 
-            return JwtHelper.GenerateJwtToken(user, _config);
+            // ✅ Ottieni i ruoli dell'utente
+            var ruoli = await _userManager.GetRolesAsync(user);
+
+            // ✅ Passali al metodo del JWT
+            return JwtHelper.GenerateJwtToken(user, _config, ruoli);
         }
     }
 }

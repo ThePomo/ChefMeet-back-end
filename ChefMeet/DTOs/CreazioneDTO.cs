@@ -8,7 +8,11 @@
         public string Immagine { get; set; }
         public string Autore { get; set; }
         public bool IsChef { get; set; }
-        public int NumeroLike { get; set; } 
+        public int NumeroLike { get; set; }
+        public string CreatoreId { get; set; }
+
+        public int? ChefId { get; set; }
+
     }
 }
 

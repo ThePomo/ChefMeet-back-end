@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ChefMeet.Controllers
 {
-    [Authorize(Roles = "Chef")]
     [ApiController]
     [Route("api/[controller]")]
     public class ChefController : ControllerBase
@@ -19,8 +18,9 @@ namespace ChefMeet.Controllers
             _context = context;
         }
 
-        // 📌 GET - Dettagli di uno chef
+        //  VISIBILE a tutti gli utenti autenticati (anche Utente)
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetChefById(int id)
         {
             var chef = await _context.Chefs
@@ -39,14 +39,15 @@ namespace ChefMeet.Controllers
                 Bio = chef.Biografia,
                 Città = chef.Città,
                 ImmagineProfilo = chef.ImmagineProfilo,
-                UserId = chef.UserId // ✅ aggiunto per confrontare nel frontend
+                UserId = chef.UserId
             };
 
             return Ok(dto);
         }
 
-        // 📌 GET - Ottieni chef tramite UserId (string)
+        
         [HttpGet("byUser/{userId}")]
+        [Authorize(Roles = "Chef,Utente,Admin")]
         public async Task<IActionResult> GetChefByUserId(string userId)
         {
             var chef = await _context.Chefs
@@ -65,14 +66,15 @@ namespace ChefMeet.Controllers
                 Bio = chef.Biografia,
                 Città = chef.Città,
                 ImmagineProfilo = chef.ImmagineProfilo,
-                UserId = chef.UserId // ✅ aggiunto anche qui
+                UserId = chef.UserId
             };
 
             return Ok(dto);
         }
 
-        // 📌 POST - Crea chef
+        // Solo Chef
         [HttpPost]
+        [Authorize(Roles = "Chef")]
         public async Task<IActionResult> CreaChef([FromBody] ChefDTO dto)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
@@ -95,8 +97,9 @@ namespace ChefMeet.Controllers
             return Ok(dto);
         }
 
-        // 📌 PUT - Modifica chef
+        // Solo Chef
         [HttpPut("{id}")]
+        [Authorize(Roles = "Chef")]
         public async Task<IActionResult> ModificaChef(int id, [FromBody] ChefDTO dto)
         {
             var chef = await _context.Chefs.Include(c => c.Utente).FirstOrDefaultAsync(c => c.Id == id);
@@ -113,8 +116,9 @@ namespace ChefMeet.Controllers
             return Ok($"Chef {id} aggiornato");
         }
 
-        // 📌 DELETE - Elimina chef
+        // Solo Chef
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Chef")]
         public async Task<IActionResult> EliminaChef(int id)
         {
             var chef = await _context.Chefs.FindAsync(id);
