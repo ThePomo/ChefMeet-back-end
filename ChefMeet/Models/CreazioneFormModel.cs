@@ -6,6 +6,6 @@ namespace ChefMeet.Models.FormModels
     {
         public string Nome { get; set; }
         public string Descrizione { get; set; }
-        public IFormFile Immagine { get; set; }
+        public IFormFile? Immagine { get; set; }
     }
 }

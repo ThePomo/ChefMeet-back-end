@@ -61,8 +61,11 @@ namespace ChefMeet.Controllers
 
         // 📌 POST - Crea utente
         [HttpPost("crea-utente")]
-        public async Task<IActionResult> CreaUtente([FromBody] ApplicationUserDTO dto)
+        public async Task<IActionResult> CreaUtente([FromBody] CreaUtenteDTO dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var newUser = new ApplicationUser
             {
                 Nome = dto.Nome,
@@ -72,20 +75,28 @@ namespace ChefMeet.Controllers
                 Ruolo = dto.Ruolo
             };
 
-            var result = await _userManager.CreateAsync(newUser, "Password123!");
+            var result = await _userManager.CreateAsync(newUser, dto.Password);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
             await _userManager.AddToRoleAsync(newUser, dto.Ruolo);
-            dto.Id = newUser.Id;
-            return Ok(dto);
+
+            return Ok(new ApplicationUserDTO
+            {
+                Id = newUser.Id,
+                Nome = newUser.Nome,
+                Cognome = newUser.Cognome,
+                Email = newUser.Email,
+                Ruolo = newUser.Ruolo
+            });
         }
+
 
         [HttpPut("modifica-utente/{id}")]
         public async Task<IActionResult> ModificaUtente(string id, [FromBody] ApplicationUserDTO modifiche)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState); // restituisce gli errori di validazione
+                return BadRequest(ModelState); 
           
 
             var user = await _userManager.FindByIdAsync(id);

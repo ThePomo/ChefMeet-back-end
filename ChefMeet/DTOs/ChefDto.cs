@@ -8,7 +8,7 @@
         public string Email { get; set; }
         public string Bio { get; set; }
         public string Città { get; set; }
-        public string ImmagineProfilo { get; set; }
+        public string? ImmagineProfilo { get; set; }
 
         public string UserId { get; set; }  
 

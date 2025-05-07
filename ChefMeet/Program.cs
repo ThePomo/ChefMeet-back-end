@@ -2,7 +2,7 @@
 using ChefMeet.Models;
 using ChefMeet.Interfaces;
 using ChefMeet.Services;
-using ChefMeet.Helpers;
+using ChefMeet.Helpers; // 👈 Aggiunto
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -95,11 +95,13 @@ public class Program
             {
                 { jwtSecurityScheme, Array.Empty<string>() }
             });
+
+            // 👇 Aggiunta del filtro per evitare errori con IFormFile
+            c.OperationFilter<IgnoreFormFileOperationFilter>();
         });
 
         var app = builder.Build();
-
-      
+        app.UseDeveloperExceptionPage();
 
         // MIDDLEWARE
         if (app.Environment.IsDevelopment())
