@@ -38,8 +38,10 @@ namespace ChefMeet.Controllers
                     Id = p.Id,
                     EventoId = p.EventoId,
                     EventoTitolo = p.Evento.Titolo,
+                    EventoImmagine = p.Evento.Immagine,
                     UtenteNome = p.Utente.Nome + " " + p.Utente.Cognome,
                     DataPrenotazione = p.DataPrenotazione
+
                 })
                 .ToListAsync();
 
@@ -86,7 +88,8 @@ namespace ChefMeet.Controllers
                     EventoId = p.EventoId,
                     EventoTitolo = p.Evento.Titolo,
                     UtenteNome = p.Utente.Nome + " " + p.Utente.Cognome,
-                    DataPrenotazione = p.DataPrenotazione
+                    DataPrenotazione = p.DataPrenotazione,
+                     EventoImmagine = p.Evento.Immagine
                 })
                 .ToListAsync();
 
